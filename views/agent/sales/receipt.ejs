@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Receipt</title>
+</head>
+<body>
+    <div id="receipt">
+        <h1>Crown Stores</h1>
+        <p>Receipt #: <%= sale.sale_id %></p>
+        <p>Date: <%= new Date(sale.sale_date).toLocaleString() %></p>
+        <p>Sales Agent: <%= sale.agent_name %></p>
+        <hr>
+        <table border="1" cellpadding="8" style="width:100%">
+            <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+            </tr>
+            <% sale.items.forEach(item => { %>
+            <tr>
+                <td><%= item.product_name %></td>
+                <td><%= item.quantity %></td>
+                <td><%= item.unit_price %></td>
+                <td><%= item.unit_price * item.quantity %></td>
+            </tr>
+            <% }) %>
+        </table>
+        <hr>
+        <h3>Total: <%= sale.total_amount %></h3>
+        <p>Amount Paid: <%= sale.amount_paid %></p>
+        <p>Change: <%= (sale.amount_paid - sale.total_amount).toFixed(2) %></p>
+    </div>
+
+    <br>
+    <button onclick="window.print()">Print Receipt</button>
+    <br><br>
+    <a href="/agent/sales/new">Start New Sale</a> |
+    <a href="/agent/dashboard">Dashboard</a>
+</body>
+</html>

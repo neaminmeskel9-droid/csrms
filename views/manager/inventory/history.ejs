@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventory History</title>
+</head>
+<body>
+    <h1>Inventory History (Audit Log)</h1>
+    <a href="/manager/inventory">← Back to Inventory</a>
+    <a href="/logout" style="float:right">Logout</a>
+
+    <table border="1" cellpadding="8" style="margin-top:20px; width:100%">
+        <tr>
+            <th>Date</th>
+            <th>Product</th>
+            <th>Type</th>
+            <th>Quantity Change</th>
+            <th>Reason</th>
+            <th>Performed By</th>
+        </tr>
+        <% logs.forEach(log => { %>
+        <tr>
+            <td><%= new Date(log.created_at).toLocaleString() %></td>
+            <td><%= log.product_name %></td>
+            <td><%= log.change_type %></td>
+            <td><%= log.quantity_change %></td>
+            <td><%= log.reason %></td>
+            <td><%= log.performed_by_name || 'System' %></td>
+        </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

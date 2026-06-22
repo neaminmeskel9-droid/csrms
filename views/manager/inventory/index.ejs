@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventory</title>
+</head>
+<body>
+    <h1>Inventory Overview</h1>
+    <a href="/manager/dashboard">← Dashboard</a> |
+    <a href="/manager/procurements">Procurements</a> |
+    <a href="/manager/inventory/adjust">Adjust Stock</a> |
+    <a href="/manager/inventory/history">View History</a>
+    <a href="/logout" style="float:right">Logout</a>
+
+    <table border="1" cellpadding="8" style="margin-top:20px; width:100%">
+        <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Current Stock</th>
+            <th>Reorder Level</th>
+            <th>Stock Status</th>
+            <th>Status</th>
+        </tr>
+        <% inventory.forEach(item => { %>
+        <tr style="<%= item.stock_status !== 'ok' ? 'background-color:#ffe0e0' : '' %>">
+            <td><%= item.product_name %></td>
+            <td><%= item.category_name %></td>
+            <td><%= item.quantity_available %></td>
+            <td><%= item.reorder_level %></td>
+            <td>
+                <% if (item.stock_status === 'out_of_stock') { %>
+                    <strong style="color:red">OUT OF STOCK</strong>
+                <% } else if (item.stock_status === 'low_stock') { %>
+                    <strong style="color:orange">LOW STOCK</strong>
+                <% } else { %>
+                    OK
+                <% } %>
+            </td>
+            <td><%= item.status %></td>
+        </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Director Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Welcome, <%= user.fullName %></h1>
+    <h2>Director Dashboard</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Total Company Sales</th>
+            <td><%= stats.totalSales %></td>
+        </tr>
+        <tr>
+            <th>Total Inventory Value</th>
+            <td><%= stats.totalInventoryValue %></td>
+        </tr>
+        <tr>
+            <th>Total Procurement Value</th>
+            <td><%= stats.totalProcurementValue %></td>
+        </tr>
+    </table>
+
+    <br>
+    <h3>Reports</h3>
+<ul>
+    <li><a href="/director/reports/sales">Sales Report</a></li>
+    <li><a href="/director/reports/inventory">Inventory Report</a></li>
+    <li><a href="/director/reports/procurement">Procurement Report</a></li>
+</ul>
+    <a href="/logout">Logout</a>
+</body>
+</html>

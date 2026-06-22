@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Balancing History</title>
+</head>
+<body>
+    <h1>Cashier Balancing History</h1>
+    <a href="/manager/cashier-balancing">← Back to Balancing</a>
+    <a href="/logout" style="float:right">Logout</a>
+
+    <table border="1" cellpadding="8" style="width:100%">
+        <tr>
+            <th>Date</th>
+            <th>Cashier</th>
+            <th>Total Sales</th>
+            <th>Cash Collected</th>
+            <th>Variance</th>
+            <th>Approved By</th>
+        </tr>
+        <% records.forEach(r => { %>
+        <tr style="<%= r.variance != 0 ? 'background-color:#ffe0e0' : '' %>">
+            <td><%= new Date(r.balance_date).toLocaleString() %></td>
+            <td><%= r.agent_name %></td>
+            <td><%= r.total_sales %></td>
+            <td><%= r.cash_collected %></td>
+            <td><%= r.variance %></td>
+            <td><%= r.approved_by_name %></td>
+        </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

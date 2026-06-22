@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Balance Cashier</title>
+</head>
+<body>
+    <h1>Balance Cashier: <%= agent.full_name %></h1>
+    <a href="/manager/cashier-balancing">← Back</a>
+
+    <% if (error) { %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
+
+    <h3>System Total Sales Today: <%= totalSales %></h3>
+
+    <form action="/manager/cashier-balancing/submit" method="POST">
+        <input type="hidden" name="agent_id" value="<%= agent.user_id %>">
+        <input type="hidden" name="total_sales" value="<%= totalSales %>">
+
+        <label>Cash Collected from Cashier:</label><br>
+        <input type="number" name="cash_collected" step="0.01" required>
+        <br><br>
+        <button type="submit">Submit Balancing</button>
+    </form>
+</body>
+</html>

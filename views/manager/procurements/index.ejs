@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Procurements</title>
+</head>
+<body>
+    <h1>Procurements</h1>
+    <a href="/manager/dashboard">← Dashboard</a> |
+    <a href="/manager/inventory">Inventory</a> |
+    <a href="/manager/procurements/create">+ Record Procurement</a>
+    <a href="/logout" style="float:right">Logout</a>
+
+    <table border="1" cellpadding="8" style="margin-top:20px; width:100%">
+        <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Supplier</th>
+            <th>Quantity</th>
+            <th>Cost Price</th>
+            <th>Branch</th>
+            <th>Received By</th>
+            <th>Date</th>
+        </tr>
+        <% procurements.forEach(p => { %>
+        <tr>
+            <td><%= p.procurement_id %></td>
+            <td><%= p.product_name %></td>
+            <td><%= p.supplier_name %></td>
+            <td><%= p.quantity_received %></td>
+            <td><%= p.cost_price %></td>
+            <td><%= p.branch %></td>
+            <td><%= p.received_by_name %></td>
+            <td><%= new Date(p.date_received).toLocaleString() %></td>
+        </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

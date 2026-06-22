@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Product</title>
+</head>
+<body>
+    <h1>Edit Product</h1>
+    <a href="/manager/products">← Back to Products</a>
+
+    <% if (error) { %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
+
+    <form action="/manager/products/edit/<%= product.product_id %>" method="POST">
+        <div>
+            <label>Category:</label><br>
+            <select name="category_id" required>
+                <% categories.forEach(cat => { %>
+                    <option value="<%= cat.category_id %>"
+                        <%= cat.category_id === product.category_id ? 'selected' : '' %>>
+                        <%= cat.category_name %>
+                    </option>
+                <% }) %>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label>Product Name:</label><br>
+            <input type="text" name="product_name" value="<%= product.product_name %>" required>
+        </div>
+        <br>
+        <div>
+            <label>Barcode:</label><br>
+            <input type="text" name="barcode" value="<%= product.barcode || '' %>">
+        </div>
+        <br>
+        <div>
+            <label>Description:</label><br>
+            <textarea name="description" rows="3" cols="40"><%= product.description || '' %></textarea>
+        </div>
+        <br>
+        <div>
+            <label>Cost Price:</label><br>
+            <input type="number" name="cost_price" step="0.01" value="<%= product.cost_price %>" required>
+        </div>
+        <br>
+        <div>
+            <label>Selling Price:</label><br>
+            <input type="number" name="selling_price" step="0.01" value="<%= product.selling_price %>" required>
+        </div>
+        <br>
+        <div>
+            <label>Reorder Level:</label><br>
+            <input type="number" name="reorder_level" value="<%= product.reorder_level %>">
+        </div>
+        <br>
+        <button type="submit">Update Product</button>
+    </form>
+</body>
+</html>

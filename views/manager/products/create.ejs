@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Product</title>
+</head>
+<body>
+    <h1>Create Product</h1>
+    <a href="/manager/products">← Back to Products</a>
+
+    <% if (error) { %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
+
+    <form action="/manager/products/create" method="POST">
+        <div>
+            <label>Category:</label><br>
+            <select name="category_id" required>
+                <option value="">-- Select Category --</option>
+                <% categories.forEach(cat => { %>
+                    <option value="<%= cat.category_id %>"><%= cat.category_name %></option>
+                <% }) %>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label>Product Name:</label><br>
+            <input type="text" name="product_name" required>
+        </div>
+        <br>
+        <div>
+            <label>Barcode:</label><br>
+            <input type="text" name="barcode">
+        </div>
+        <br>
+        <div>
+            <label>Description:</label><br>
+            <textarea name="description" rows="3" cols="40"></textarea>
+        </div>
+        <br>
+        <div>
+            <label>Cost Price:</label><br>
+            <input type="number" name="cost_price" step="0.01" required>
+        </div>
+        <br>
+        <div>
+            <label>Selling Price:</label><br>
+            <input type="number" name="selling_price" step="0.01" required>
+        </div>
+        <br>
+        <div>
+            <label>Reorder Level:</label><br>
+            <input type="number" name="reorder_level" value="0">
+        </div>
+        <br>
+        <button type="submit">Create Product</button>
+    </form>
+</body>
+</html>

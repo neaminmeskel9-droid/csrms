@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Adjust Stock</title>
+</head>
+<body>
+    <h1>Adjust Stock</h1>
+    <a href="/manager/inventory">← Back to Inventory</a>
+
+    <% if (error) { %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
+
+    <p>Use a positive number to increase stock, negative to decrease (e.g. -10 for damaged products).</p>
+
+    <form action="/manager/inventory/adjust" method="POST">
+        <div>
+            <label>Product:</label><br>
+            <select name="product_id" required>
+                <option value="">-- Select Product --</option>
+                <% products.forEach(p => { %>
+                    <option value="<%= p.product_id %>"><%= p.product_name %> (Current: <%= p.quantity_available %>)</option>
+                <% }) %>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label>Adjustment Quantity:</label><br>
+            <input type="number" name="adjustment_quantity" required>
+        </div>
+        <br>
+        <div>
+            <label>Reason for Adjustment:</label><br>
+            <textarea name="reason" rows="3" cols="40" required placeholder="e.g. Damaged products, stock count correction"></textarea>
+        </div>
+        <br>
+        <button type="submit">Submit Adjustment</button>
+    </form>
+</body>
+</html>

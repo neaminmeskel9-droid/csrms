@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Record Procurement</title>
+</head>
+<body>
+    <h1>Record Procurement</h1>
+    <a href="/manager/procurements">← Back to Procurements</a>
+
+    <% if (error) { %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
+
+    <form action="/manager/procurements/create" method="POST">
+        <div>
+            <label>Product:</label><br>
+            <select name="product_id" required>
+                <option value="">-- Select Product --</option>
+                <% products.forEach(p => { %>
+                    <option value="<%= p.product_id %>"><%= p.product_name %></option>
+                <% }) %>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label>Supplier Name:</label><br>
+            <input type="text" name="supplier_name" required>
+        </div>
+        <br>
+        <div>
+            <label>Quantity Received:</label><br>
+            <input type="number" name="quantity_received" min="1" required>
+        </div>
+        <br>
+        <div>
+            <label>Cost Price (per unit):</label><br>
+            <input type="number" name="cost_price" step="0.01" required>
+        </div>
+        <br>
+        <div>
+            <label>Receiving Branch:</label><br>
+            <input type="text" name="branch" value="Main Branch" required>
+        </div>
+        <br>
+        <button type="submit">Record Procurement</button>
+    </form>
+</body>
+</html>

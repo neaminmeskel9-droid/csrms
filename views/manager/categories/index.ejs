@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories</title>
+</head>
+<body>
+    <h1>Categories</h1>
+    <a href="/manager/dashboard">← Dashboard</a> | 
+    <a href="/manager/categories/create">+ Add Category</a>
+    <a href="/logout" style="float:right">Logout</a>
+
+    <table border="1" cellpadding="8" style="margin-top:20px; width:100%">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        <% categories.forEach(cat => { %>
+        <tr>
+            <td><%= cat.category_id %></td>
+            <td><%= cat.category_name %></td>
+            <td><%= cat.description %></td>
+            <td><%= cat.status %></td>
+            <td>
+                <a href="/manager/categories/edit/<%= cat.category_id %>">Edit</a> |
+                <form action="/manager/categories/toggle/<%= cat.category_id %>" method="POST" style="display:inline">
+                    <button type="submit">
+                        <%= cat.status === 'active' ? 'Deactivate' : 'Activate' %>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

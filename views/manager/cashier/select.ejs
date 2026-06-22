@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cashier Balancing</title>
+</head>
+<body>
+    <h1>Cashier Balancing</h1>
+    <a href="/manager/dashboard">← Dashboard</a> |
+    <a href="/manager/cashier-balancing/history">View History</a>
+    <a href="/logout" style="float:right">Logout</a>
+
+    <h2>Select Cashier to Balance</h2>
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Cashier Name</th>
+            <th>Action</th>
+        </tr>
+        <% agents.forEach(agent => { %>
+        <tr>
+            <td><%= agent.full_name %></td>
+            <td><a href="/manager/cashier-balancing/<%= agent.user_id %>">Balance</a></td>
+        </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

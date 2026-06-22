@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventory Report</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Inventory Report</h1>
+    <a href="/director/dashboard">← Back to Dashboard</a>
+
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Stock Qty</th>
+            <th>Cost Price</th>
+            <th>Selling Price</th>
+            <th>Stock Value</th>
+            <th>Status</th>
+        </tr>
+        <% inventory.forEach(item => { %>
+        <tr style="<%= item.stock_status !== 'ok' ? 'background-color:#ffe0e0' : '' %>">
+            <td><%= item.product_name %></td>
+            <td><%= item.category_name %></td>
+            <td><%= item.quantity_available %></td>
+            <td><%= item.cost_price %></td>
+            <td><%= item.selling_price %></td>
+            <td><%= item.stock_value %></td>
+            <td><%= item.stock_status %></td>
+        </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

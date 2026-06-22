@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manager Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Welcome, <%= user.fullName %></h1>
+    <h2>Manager Dashboard</h2>
+
+    <% if (lowStockProducts.length > 0) { %>
+        <div style="background:#ffe0e0; padding:10px; border:1px solid red;">
+            <strong>⚠ Low Stock Alert:</strong>
+            <ul>
+                <% lowStockProducts.forEach(p => { %>
+                    <li><%= p.product_name %> — <%= p.quantity_available %> left (reorder at <%= p.reorder_level %>)</li>
+                <% }) %>
+            </ul>
+        </div>
+        <br>
+    <% } %>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Today's Sales</th>
+            <td><%= stats.todaySales %></td>
+        </tr>
+        <tr>
+            <th>Number of Transactions Today</th>
+            <td><%= stats.saleCount %></td>
+        </tr>
+        <tr>
+            <th>Products Needing Reorder</th>
+            <td><%= stats.lowStockCount %></td>
+        </tr>
+    </table>
+
+    <h3>Cashier Summary (Today)</h3>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Cashier</th>
+            <th>Sales Today</th>
+        </tr>
+        <% stats.cashierSummary.forEach(c => { %>
+        <tr>
+            <td><%= c.full_name %></td>
+            <td><%= c.total %></td>
+        </tr>
+        <% }) %>
+    </table>
+
+    <br>
+    <ul>
+        <li><a href="/manager/categories">Categories</a></li>
+        <li><a href="/manager/products">Products</a></li>
+        <li><a href="/manager/procurements">Procurements</a></li>
+        <li><a href="/manager/inventory">Inventory</a></li>
+        <li><a href="/manager/cashier-balancing">Cashier Balancing</a></li>
+    </ul>
+
+    <a href="/logout">Logout</a>
+</body>
+</html>

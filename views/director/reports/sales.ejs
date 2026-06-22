@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Report</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Sales Report</h1>
+    <a href="/director/dashboard">← Back to Dashboard</a>
+
+    <h3>Filter by Date Range</h3>
+    <form action="/director/reports/sales" method="GET">
+        <label>Start Date:</label>
+        <input type="date" name="startDate" value="<%= startDate %>" required>
+
+        <label>End Date:</label>
+        <input type="date" name="endDate" value="<%= endDate %>" required>
+
+        <button type="submit">Filter</button>
+    </form>
+
+    <h3>Summary</h3>
+    <p>Total Transactions: <%= summary.total_transactions %></p>
+    <p>Total Revenue: <%= summary.total_revenue %></p>
+
+    <h3>Transactions</h3>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Sale ID</th>
+            <th>Date</th>
+            <th>Agent</th>
+            <th>Total Amount</th>
+            <th>Amount Paid</th>
+        </tr>
+        <% sales.forEach(s => { %>
+        <tr>
+            <td><%= s.sale_id %></td>
+            <td><%= s.sale_date %></td>
+            <td><%= s.agent_name %></td>
+            <td><%= s.total_amount %></td>
+            <td><%= s.amount_paid %></td>
+        </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

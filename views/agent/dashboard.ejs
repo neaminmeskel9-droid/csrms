@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Agent Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Welcome, <%= user.fullName %></h1>
+    <h2>Sales Agent Dashboard</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Today's Sales</th>
+            <td><%= stats.todaySales %></td>
+        </tr>
+        <tr>
+            <th>Transactions Today</th>
+            <td><%= stats.saleCount %></td>
+        </tr>
+    </table>
+
+    <br>
+    <ul>
+        <li><a href="/agent/sales/new">New Sale</a></li>
+    </ul>
+
+    <a href="/logout">Logout</a>
+</body>
+</html>

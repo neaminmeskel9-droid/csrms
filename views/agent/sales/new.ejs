@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Sale</title>
+</head>
+<body>
+    <h1>New Sale</h1>
+    <a href="/agent/dashboard">← Dashboard</a>
+    <a href="/logout" style="float:right">Logout</a>
+
+    <% if (error) { %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
+
+    <h2>Search Product</h2>
+    <form action="/agent/sales/search" method="GET">
+        <input type="text" name="query" placeholder="Product name or barcode" 
+               value="<%= typeof query !== 'undefined' ? query : '' %>">
+        <button type="submit">Search</button>
+    </form>
+
+    <% if (searchResults && searchResults.length > 0) { %>
+        <h3>Search Results</h3>
+        <table border="1" cellpadding="8" style="width:100%">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>In Stock</th>
+                <th>Add</th>
+            </tr>
+            <% searchResults.forEach(p => { %>
+            <tr>
+                <td><%= p.product_name %></td>
+                <td><%= p.selling_price %></td>
+                <td><%= p.quantity_available %></td>
+                <td>
+                    <form action="/agent/sales/add" method="POST" style="display:flex; gap:5px">
+                        <input type="hidden" name="product_id" value="<%= p.product_id %>">
+                        <input type="number" name="quantity" value="1" min="1" 
+                               max="<%= p.quantity_available %>" style="width:60px">
+                        <button type="submit">Add to Cart</button>
+                    </form>
+                </td>
+            </tr>
+            <% }) %>
+        </table>
+    <% } %>
+
+    <h2>Cart</h2>
+    <% if (cart.length === 0) { %>
+        <p>Cart is empty. Search for a product above.</p>
+    <% } else { %>
+        <table border="1" cellpadding="8" style="width:100%">
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+            </tr>
+            <% let cartTotal = 0; %>
+            <% cart.forEach(item => { %>
+                <% const subtotal = item.unit_price * item.quantity; %>
+                <% cartTotal += subtotal; %>
+                <tr>
+                    <td><%= item.product_name %></td>
+                    <td><%= item.quantity %></td>
+                    <td><%= item.unit_price %></td>
+                    <td><%= subtotal %></td>
+                    <td>
+                        <form action="/agent/sales/remove/<%= item.product_id %>" method="POST">
+                            <button type="submit">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </table>
+        <h3>Total: <%= cartTotal %></h3>
+        <a href="/agent/sales/checkout">
+            <button type="button">Proceed to Checkout</button>
+        </a>
+    <% } %>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Procurement Report</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Procurement Report</h1>
+    <a href="/director/dashboard">← Back to Dashboard</a>
+
+    <h3>Filter by Date Range</h3>
+    <form action="/director/reports/procurement" method="GET">
+        <label>Start Date:</label>
+        <input type="date" name="startDate" value="<%= startDate %>" required>
+
+        <label>End Date:</label>
+        <input type="date" name="endDate" value="<%= endDate %>" required>
+
+        <button type="submit">Filter</button>
+    </form>
+
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Procurement ID</th>
+            <th>Date Received</th>
+            <th>Product</th>
+            <th>Supplier</th>
+            <th>Qty Received</th>
+            <th>Cost Price</th>
+            <th>Branch</th>
+            <th>Received By</th>
+        </tr>
+        <% procurements.forEach(p => { %>
+        <tr>
+            <td><%= p.procurement_id %></td>
+            <td><%= p.date_received %></td>
+            <td><%= p.product_name %></td>
+            <td><%= p.supplier_name %></td>
+            <td><%= p.quantity_received %></td>
+            <td><%= p.cost_price %></td>
+            <td><%= p.branch %></td>
+            <td><%= p.received_by_name %></td>
+        </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

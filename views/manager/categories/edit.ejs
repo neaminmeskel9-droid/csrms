@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Category</title>
+</head>
+<body>
+    <h1>Edit Category</h1>
+    <a href="/manager/categories">← Back to Categories</a>
+
+    <% if (error) { %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
+
+    <form action="/manager/categories/edit/<%= category.category_id %>" method="POST">
+        <div>
+            <label>Category Name:</label><br>
+            <input type="text" name="category_name" 
+                   value="<%= category.category_name %>" required>
+        </div>
+        <br>
+        <div>
+            <label>Description:</label><br>
+            <textarea name="description" rows="4" cols="40"><%= category.description %></textarea>
+        </div>
+        <br>
+        <button type="submit">Update Category</button>
+    </form>
+</body>
+</html>

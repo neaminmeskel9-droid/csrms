@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+</head>
+<body>
+    <h1>Checkout</h1>
+    <a href="/agent/sales/new">← Back to Sale</a>
+
+    <% if (error) { %>
+        <p style="color:red"><%= error %></p>
+    <% } %>
+
+    <table border="1" cellpadding="8" style="width:100%">
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Subtotal</th>
+        </tr>
+        <% cart.forEach(item => { %>
+        <tr>
+            <td><%= item.product_name %></td>
+            <td><%= item.quantity %></td>
+            <td><%= item.unit_price %></td>
+            <td><%= item.unit_price * item.quantity %></td>
+        </tr>
+        <% }) %>
+    </table>
+
+    <h2>Total Amount: <%= total %></h2>
+
+    <form action="/agent/sales/checkout" method="POST">
+        <label>Amount Paid:</label><br>
+        <input type="number" name="amount_paid" step="0.01" min="<%= total %>" required>
+        <br><br>
+        <button type="submit">Complete Sale</button>
+    </form>
+</body>
+</html>
