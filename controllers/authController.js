@@ -1,56 +1,24 @@
-const bcrypt = require('bcrypt');
-const userModel = require('../models/userModel');
+// Replace your existing redirect block with this:
 
-// Show login page
-function showLogin(req, res) {
-    res.render('auth/login', { error: null });
+// 1. Uniform the role to what your frontend routes expect
+let userRole = user.role;
+if (userRole === 'sales_agent') {
+    userRole = 'agent'; // Forces 'sales_agent' to match an 'agent' route/middleware
 }
 
-// Handle login
-async function login(req, res) {
-    const { username, password } = req.body;
+// 2. Save user info in session using the normalized role
+req.session.user = {
+    id: user.user_id,
+    fullName: user.full_name,
+    username: user.username,
+    role: userRole // Now matches your route checks
+};
 
-    try {
-        const user = await userModel.findByUsername(username);
-
-        if (!user) {
-            return res.render('auth/login', { error: 'Invalid username or password' });
-        }
-
-        const match = await bcrypt.compare(password, user.password_hash);
-
-        if (!match) {
-            return res.render('auth/login', { error: 'Invalid username or password' });
-        }
-
-        // Save user info in session
-        req.session.user = {
-            id: user.user_id,
-            fullName: user.full_name,
-            username: user.username,
-            role: user.role
-        };
-
-        // Redirect based on role
-        if (user.role === 'director') {
-            res.redirect('/director/dashboard');
-        } else if (user.role === 'manager') {
-            res.redirect('/manager/dashboard');
-        } else {
-            res.redirect('/agent/dashboard');
-        }
-
-    } catch (err) {
-        console.error(err);
-        res.render('auth/login', { error: 'Something went wrong. Try again.' });
-    }
+// 3. Redirect smoothly
+if (userRole === 'director') {
+    res.redirect('/director/dashboard');
+} else if (userRole === 'manager') {
+    res.redirect('/manager/dashboard');
+} else {
+    res.redirect('/agent/dashboard');
 }
-
-// Handle logout
-function logout(req, res) {
-    req.session.destroy(() => {
-        res.redirect('/login');
-    });
-}
-
-module.exports = { showLogin, login, logout };
