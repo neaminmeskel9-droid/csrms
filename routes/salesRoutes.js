@@ -16,3 +16,4 @@ router.post('/sales/checkout', isSalesAgent, salesController.completeSale);
 router.get('/sales/receipt/:id', isSalesAgent, salesController.showReceipt);
 
 module.exports = router;
+// final route deployment fix
