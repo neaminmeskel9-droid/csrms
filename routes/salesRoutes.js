@@ -3,12 +3,16 @@ const router = express.Router();
 const salesController = require('../controllers/salesController');
 const { isSalesAgent } = require('../middleware/authMiddleware');
 
-router.get('/agent/sales/new', isSalesAgent, salesController.showSalesScreen);
-router.get('/agent/sales/search', isSalesAgent, salesController.searchProduct);
-router.post('/agent/sales/add', isSalesAgent, salesController.addToCart);
-router.post('/agent/sales/remove/:product_id', isSalesAgent, salesController.removeFromCart);
-router.get('/agent/sales/checkout', isSalesAgent, salesController.showCheckout);
-router.post('/agent/sales/checkout', isSalesAgent, salesController.completeSale);
-router.get('/agent/sales/receipt/:id', isSalesAgent, salesController.showReceipt);
+// 1. Landing Page Dashboard Redirect (maps to /agent/dashboard)
+router.get('/dashboard', isSalesAgent, salesController.showDashboard);
+
+// 2. Sales Operations Routes (maps to /agent/sales/...)
+router.get('/sales/new', isSalesAgent, salesController.showSalesScreen);
+router.get('/sales/search', isSalesAgent, salesController.searchProduct);
+router.post('/sales/add', isSalesAgent, salesController.addToCart);
+router.post('/sales/remove/:product_id', isSalesAgent, salesController.removeFromCart);
+router.get('/sales/checkout', isSalesAgent, salesController.showCheckout);
+router.post('/sales/checkout', isSalesAgent, salesController.completeSale);
+router.get('/sales/receipt/:id', isSalesAgent, salesController.showReceipt);
 
 module.exports = router;
