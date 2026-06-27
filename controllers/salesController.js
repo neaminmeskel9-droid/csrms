@@ -1,5 +1,18 @@
 const salesModel = require('../models/salesModel');
 
+// NEW: Show the main Agent Dashboard landing page
+function showDashboard(req, res) {
+    try {
+        // Renders your dashboard view at views/agent/dashboard.ejs
+        res.render('agent/dashboard', { 
+            user: req.session.user 
+        });
+    } catch (err) {
+        console.error("Error rendering agent dashboard:", err);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
 // Show the sales screen (cart lives in session)
 function showSalesScreen(req, res) {
     if (!req.session.cart) {
@@ -143,7 +156,14 @@ async function showReceipt(req, res) {
     }
 }
 
+// Added showDashboard into exports down here
 module.exports = { 
-    showSalesScreen, searchProduct, addToCart, removeFromCart, 
-    showCheckout, completeSale, showReceipt 
+    showDashboard, 
+    showSalesScreen, 
+    searchProduct, 
+    addToCart, 
+    removeFromCart, 
+    showCheckout, 
+    completeSale, 
+    showReceipt 
 };
