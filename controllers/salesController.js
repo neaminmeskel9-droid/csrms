@@ -1,169 +1,166 @@
 const salesModel = require('../models/salesModel');
 
-// NEW: Show the main Agent Dashboard landing page
-function showDashboard(req, res) {
+// Show sales screen
+async function showSalesScreen(req, res) {
     try {
-        // Renders your dashboard view at views/agent/dashboard.ejs
-        res.render('agent/dashboard', { 
-            user: req.session.user 
+        if (!req.session.cart) {
+            req.session.cart = [];
+        }
+        res.render('agent/sales/new', {
+            user: req.session.user,
+            cart: req.session.cart,
+            searchResults: [],
+            error: null
         });
     } catch (err) {
-        console.error("Error rendering agent dashboard:", err);
-        res.status(500).send("Internal Server Error");
+        console.error('showSalesScreen error:', err);
+        res.send('Error loading sales screen: ' + err.message);
     }
 }
 
-// Show the sales screen (cart lives in session)
-function showSalesScreen(req, res) {
-    if (!req.session.cart) {
-        req.session.cart = [];
-    }
-    res.render('agent/sales/new', { 
-        cart: req.session.cart,
-        user: req.session.user,
-        error: null,
-        searchResults: []
-    });
-}
-
-// Handle product search (AJAX-free, simple form submit)
+// Search for a product
 async function searchProduct(req, res) {
-    const { query } = req.query;
     try {
-        const searchResults = query ? await salesModel.searchProducts(query) : [];
+        const { query } = req.body;
+        const searchResults = await salesModel.searchProducts(query);
         res.render('agent/sales/new', {
-            cart: req.session.cart || [],
             user: req.session.user,
-            error: null,
+            cart: req.session.cart || [],
             searchResults,
-            query
+            error: null
         });
     } catch (err) {
-        console.error(err);
-        res.render('agent/sales/new', {
-            cart: req.session.cart || [],
-            user: req.session.user,
-            error: 'Search failed',
-            searchResults: []
-        });
+        console.error('searchProduct error:', err);
+        res.send('Error searching products: ' + err.message);
     }
 }
 
-// Add item to cart
+// Add product to cart
 async function addToCart(req, res) {
-    const { product_id, quantity } = req.body;
     try {
+        const { product_id, quantity } = req.body;
         const product = await salesModel.getProductForSale(product_id);
-        const qty = parseInt(quantity);
 
         if (!product) {
-            throw new Error('Product not found');
-        }
-        if (product.quantity_available < qty) {
-            throw new Error('Not enough stock available');
+            return res.redirect('/agent/sales/new');
         }
 
-        if (!req.session.cart) req.session.cart = [];
+        if (!req.session.cart) {
+            req.session.cart = [];
+        }
 
-        // If item already in cart, increase quantity instead of duplicating
-        const existing = req.session.cart.find(item => item.product_id == product_id);
-        if (existing) {
-            existing.quantity += qty;
+        const existingItem = req.session.cart.find(
+            item => item.product_id == product_id
+        );
+
+        if (existingItem) {
+            existingItem.quantity += parseInt(quantity);
+            existingItem.subtotal = existingItem.quantity * existingItem.unit_price;
         } else {
             req.session.cart.push({
                 product_id: product.product_id,
                 product_name: product.product_name,
                 unit_price: product.selling_price,
-                quantity: qty
+                quantity: parseInt(quantity),
+                subtotal: parseInt(quantity) * product.selling_price
             });
         }
 
         res.redirect('/agent/sales/new');
     } catch (err) {
-        console.error(err);
-        res.render('agent/sales/new', {
-            cart: req.session.cart || [],
-            user: req.session.user,
-            error: err.message,
-            searchResults: []
-        });
+        console.error('addToCart error:', err);
+        res.send('Error adding to cart: ' + err.message);
     }
 }
 
 // Remove item from cart
-function removeFromCart(req, res) {
-    const { product_id } = req.params;
-    if (req.session.cart) {
-        req.session.cart = req.session.cart.filter(item => item.product_id != product_id);
+async function removeFromCart(req, res) {
+    try {
+        const { product_id } = req.body;
+        req.session.cart = (req.session.cart || []).filter(
+            item => item.product_id != product_id
+        );
+        res.redirect('/agent/sales/new');
+    } catch (err) {
+        console.error('removeFromCart error:', err);
+        res.send('Error removing from cart: ' + err.message);
     }
-    res.redirect('/agent/sales/new');
 }
 
-// Show checkout/payment screen
-function showCheckout(req, res) {
-    const cart = req.session.cart || [];
-    if (cart.length === 0) {
-        return res.redirect('/agent/sales/new');
+// Show checkout page
+async function showCheckout(req, res) {
+    try {
+        const cart = req.session.cart || [];
+        const total = cart.reduce((sum, item) => sum + Number(item.subtotal), 0);
+        res.render('agent/sales/checkout', {
+            user: req.session.user,
+            cart,
+            total,
+            error: null
+        });
+    } catch (err) {
+        console.error('showCheckout error:', err);
+        res.send('Error loading checkout: ' + err.message);
     }
-    const total = cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
-    res.render('agent/sales/checkout', {
-        cart,
-        total,
-        user: req.session.user,
-        error: null
-    });
 }
 
 // Complete the sale
 async function completeSale(req, res) {
-    const { amount_paid } = req.body;
-    const cart = req.session.cart || [];
-
     try {
-        if (cart.length === 0) throw new Error('Cart is empty');
+        const { amount_paid } = req.body;
+        const cart = req.session.cart || [];
 
-        const total = cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
-        if (parseFloat(amount_paid) < total) {
-            throw new Error('Amount paid is less than total amount');
+        if (cart.length === 0) {
+            return res.redirect('/agent/sales/new');
         }
 
-        const saleId = await salesModel.createSale(req.session.user.id, cart, amount_paid);
+        const total = cart.reduce((sum, item) => sum + Number(item.subtotal), 0);
 
-        // Clear cart after successful sale
-        req.session.cart = [];
+        if (parseFloat(amount_paid) < total) {
+            return res.render('agent/sales/checkout', {
+                user: req.session.user,
+                cart,
+                total,
+                error: 'Amount paid is less than total'
+            });
+        }
 
-        res.redirect(`/agent/sales/receipt/${saleId}`);
-    } catch (err) {
-        console.error(err);
-        const total = cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
-        res.render('agent/sales/checkout', {
+        const sale = await salesModel.createSale(
+            req.session.user.id,
             cart,
             total,
-            user: req.session.user,
-            error: err.message
-        });
+            parseFloat(amount_paid)
+        );
+
+        req.session.cart = [];
+        res.redirect('/agent/sales/receipt/' + sale.sale_id);
+    } catch (err) {
+        console.error('completeSale error:', err);
+        res.send('Error completing sale: ' + err.message);
     }
 }
 
 // Show receipt
 async function showReceipt(req, res) {
     try {
-        const sale = await salesModel.getSaleReceipt(req.params.id);
-        res.render('agent/sales/receipt', { sale, user: req.session.user });
+        const { saleId } = req.params;
+        const receipt = await salesModel.getSaleReceipt(saleId);
+        res.render('agent/sales/receipt', {
+            user: req.session.user,
+            receipt
+        });
     } catch (err) {
-        console.error(err);
-        res.redirect('/agent/dashboard');
+        console.error('showReceipt error:', err);
+        res.send('Error loading receipt: ' + err.message);
     }
 }
 
-// Added showDashboard into exports down here
-module.exports = { 
-    showDashboard, 
-    showSalesScreen, 
-    searchProduct, 
-    addToCart, 
-    removeFromCart, 
-    showCheckout, 
-    completeSale, 
-    showReceipt 
+module.exports = {
+    showSalesScreen,
+    searchProduct,
+    addToCart,
+    removeFromCart,
+    showCheckout,
+    completeSale,
+    showReceipt
 };
