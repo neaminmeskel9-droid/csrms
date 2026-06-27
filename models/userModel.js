@@ -1,42 +1,30 @@
-const pool = require('../config/db');
+const db = require('../config/db'); // Adjust this path to match your actual database configuration file
 
-// Find user by username
 async function findByUsername(username) {
-    const result = await pool.query(
-        'SELECT * FROM users WHERE username = $1',
-        [username]
-    );
-    return result.rows[0];
-}
-
-// Find user by ID
-async function findById(userId) {
-    const result = await pool.query(
-        'SELECT * FROM users WHERE user_id = $1',
-        [userId]
-    );
-    return result.rows[0];
-}
-
-// Create a new user
-async function createUser(fullName, username, passwordHash, role) {
-    const result = await pool.query(
-        `INSERT INTO users (full_name, username, password_hash, role)
-         VALUES ($1, $2, $3, $4) RETURNING *`,
-        [fullName, username, passwordHash, role]
-    );
-    return result.rows[0];
-}
-
-// Get all users
-async function getAllUsers() {
-    const result = await pool.query('SELECT user_id, full_name, username, role, status FROM users ORDER BY user_id');
-    return result.rows;
+    const query = `
+        SELECT 
+            user_id, 
+            username, 
+            password_hash, 
+            role, 
+            full_name, 
+            status 
+        FROM users 
+        WHERE LOWER(username) = LOWER($1) AND status = 'active';
+    `;
+    
+    try {
+        const res = await db.query(query, [username]);
+        if (res.rows.length > 0) {
+            return res.rows[0];
+        }
+        return null;
+    } catch (err) {
+        console.error('Database error in findByUsername:', err);
+        throw err;
+    }
 }
 
 module.exports = {
-    findByUsername,
-    findById,
-    createUser,
-    getAllUsers
+    findByUsername
 };
