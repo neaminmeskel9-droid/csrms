@@ -13,7 +13,6 @@ const inventoryRoutes = require('./routes/inventoryRoutes');
 const salesRoutes = require('./routes/salesRoutes');
 const cashierRoutes = require('./routes/cashierRoutes');
 const reportRoutes = require('./routes/reportRoutes');
-const agentRoutes = require('./routes/agent'); 
 
 const app = express();
 
@@ -44,7 +43,6 @@ app.use('/', inventoryRoutes);
 app.use('/', salesRoutes);
 app.use('/', cashierRoutes);
 app.use('/', reportRoutes);   
-app.use('/agent', agentRoutes); 
 
 // Home redirect
 app.get('/', (req, res) => {
