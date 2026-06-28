@@ -24,7 +24,7 @@ function isManager(req, res, next) {
 
 // Check if user is sales agent
 function isSalesAgent(req, res, next) {
-    if (req.session.user && req.session.user.role === 'sales_agent') {
+    if (req.session.user && (req.session.user.role === 'sales_agent' || req.session.user.role === 'agent')) {
         return next();
     }
     res.redirect('/login');
