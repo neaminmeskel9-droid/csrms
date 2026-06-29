@@ -23,7 +23,7 @@ async function searchProduct(req, res) {
     try {
         const { query } = req.body;
         const searchResults = await salesModel.searchProducts(query);
-        res.render('agent/sales/new', {
+        res.render('agent/sales/sales', {
             user: req.session.user,
             cart: req.session.cart || [],
             searchResults,
@@ -42,7 +42,7 @@ async function addToCart(req, res) {
         const product = await salesModel.getProductForSale(product_id);
 
         if (!product) {
-            return res.redirect('/agent/sales/new');
+            return res.redirect('/agent/sales/sales');
         }
 
         if (!req.session.cart) {
@@ -66,7 +66,7 @@ async function addToCart(req, res) {
             });
         }
 
-        res.redirect('/agent/sales/new');
+        res.redirect('/agent/sales/sales');
     } catch (err) {
         console.error('addToCart error:', err);
         res.send('Error adding to cart: ' + err.message);
@@ -80,7 +80,7 @@ async function removeFromCart(req, res) {
         req.session.cart = (req.session.cart || []).filter(
             item => item.product_id != product_id
         );
-        res.redirect('/agent/sales/new');
+        res.redirect('/agent/sales/sales');
     } catch (err) {
         console.error('removeFromCart error:', err);
         res.send('Error removing from cart: ' + err.message);
@@ -111,7 +111,7 @@ async function completeSale(req, res) {
         const cart = req.session.cart || [];
 
         if (cart.length === 0) {
-            return res.redirect('/agent/sales/new');
+            return res.redirect('/agent/sales/sales');
         }
 
         const total = cart.reduce((sum, item) => sum + Number(item.subtotal), 0);
