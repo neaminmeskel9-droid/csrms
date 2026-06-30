@@ -63,7 +63,7 @@ async function createSale(salesAgentId, cartItems, totalAmount, amountPaid) {
                 [item.quantity, item.product_id]
             );
 
-            // Log inventory change - Updated 'performed_by' to match your schema's 'changed_by'
+            // Log inventory change - Uses your database 'changed_by' column configuration
             await client.query(
                 `INSERT INTO inventory_log (product_id, change_type, quantity_change, reason, changed_by)
                  VALUES ($1, 'sale', $2, 'Sold to customer', $3)`,
@@ -83,14 +83,19 @@ async function createSale(salesAgentId, cartItems, totalAmount, amountPaid) {
 
 // Get full sale details for receipt
 async function getSaleReceipt(saleId) {
+    // Changed JOIN to LEFT JOIN to dynamically handle any user account safely
     const saleResult = await pool.query(
         `SELECT s.*, u.username as agent_name
          FROM sales s
-         JOIN users u ON s.sales_agent_id = u.user_id
+         LEFT JOIN users u ON s.sales_agent_id = u.user_id
          WHERE s.sale_id = $1`,
          [saleId]
     );
     const sale = saleResult.rows[0];
+
+    if (!sale) {
+        throw new Error(`Sale with ID ${saleId} not found`);
+    }
 
     const itemsResult = await pool.query(
         `SELECT si.*, p.product_name
