@@ -146,7 +146,8 @@ async function showReceipt(req, res) {
     try {
         const { saleId } = req.params;
         const receipt = await salesModel.getSaleReceipt(saleId);
-        res.render('agent/sales/receipt', {
+        //  CORRECT
+        res.render('agent/sales/receipt', { sale: sale }); {
             user: req.session.user,
             receipt
         });
