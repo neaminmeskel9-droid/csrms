@@ -68,8 +68,9 @@ async function createSale(salesAgentId, cartItems, totalAmount, amountPaid) {
 
             // Log inventory change - Uses your database 'changed_by' column configuration
             await client.query(
-                `INSERT INTO inventory_log (product_id, change_type, quantity_change, notes, changed_by)
-                 VALUES ($1, 'sale', $2, 'Sold to customer', $3)`,
+                // Replace the old query with this one:
+                `INSERT INTO inventory_log (product_id, change_type, quantity_change, reason, notes, changed_by) 
+                 VALUES ($1, 'sale', $2, 'Sold to customer', 'Sold to customer', $3)`
                 [item.product_id, -item.quantity, salesAgentId]
             );
         }
