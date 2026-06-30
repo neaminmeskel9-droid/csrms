@@ -31,7 +31,8 @@
 
     <h2>Total Amount: <%= total %></h2>
 
-    <form action="/agent/sales/checkout" method="POST">
+    <!-- Changed action from /agent/sales/checkout to /agent/sales/complete -->
+    <form action="/agent/sales/complete" method="POST">
         <label>Amount Paid:</label><br>
         <input type="number" name="amount_paid" step="0.01" min="<%= total %>" required>
         <br><br>
