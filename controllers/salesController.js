@@ -125,8 +125,9 @@ async function completeSale(req, res) {
             });
         }
 
+        // FIXED: Changed req.session.user.id to user_id to match your database schema
         const sale = await salesModel.createSale(
-            req.session.user.id,
+            req.session.user.user_id,
             cart,
             total,
             parseFloat(amount_paid)
