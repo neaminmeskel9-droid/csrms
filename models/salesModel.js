@@ -25,16 +25,10 @@ async function getProductForSale(productId) {
 }
 
 // Create a complete sale (transaction: sale + items + stock reduction + log)
-async function createSale(salesAgentId, cartItems, amountPaid) {
+async function createSale(salesAgentId, cartItems, totalAmount, amountPaid) {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
-
-        // Calculate total
-        let totalAmount = 0;
-        for (const item of cartItems) {
-            totalAmount += item.unit_price * item.quantity;
-        }
 
         // Insert sale record
         const saleResult = await client.query(
@@ -42,7 +36,7 @@ async function createSale(salesAgentId, cartItems, amountPaid) {
              VALUES ($1, $2, $3) RETURNING *`,
             [salesAgentId, totalAmount, amountPaid]
         );
-        const saleId = saleResult.rows[0].sale_id;
+        const sale = saleResult.rows[0];
 
         // Insert each sale item, reduce stock, log inventory change
         for (const item of cartItems) {
@@ -59,7 +53,7 @@ async function createSale(salesAgentId, cartItems, amountPaid) {
             await client.query(
                 `INSERT INTO sale_items (sale_id, product_id, quantity, unit_price)
                  VALUES ($1, $2, $3, $4)`,
-                [saleId, item.product_id, item.quantity, item.unit_price]
+                [sale.sale_id, item.product_id, item.quantity, item.unit_price]
             );
 
             // Reduce stock
@@ -69,16 +63,16 @@ async function createSale(salesAgentId, cartItems, amountPaid) {
                 [item.quantity, item.product_id]
             );
 
-            // Log inventory change
+            // Log inventory change - Updated 'performed_by' to match your schema's 'changed_by'
             await client.query(
-                `INSERT INTO inventory_log (product_id, change_type, quantity_change, reason, performed_by)
+                `INSERT INTO inventory_log (product_id, change_type, quantity_change, reason, changed_by)
                  VALUES ($1, 'sale', $2, 'Sold to customer', $3)`,
                 [item.product_id, -item.quantity, salesAgentId]
             );
         }
 
         await client.query('COMMIT');
-        return saleId;
+        return sale;
     } catch (err) {
         await client.query('ROLLBACK');
         throw err;
@@ -90,11 +84,11 @@ async function createSale(salesAgentId, cartItems, amountPaid) {
 // Get full sale details for receipt
 async function getSaleReceipt(saleId) {
     const saleResult = await pool.query(
-        `SELECT s.*, u.full_name as agent_name
+        `SELECT s.*, u.username as agent_name
          FROM sales s
          JOIN users u ON s.sales_agent_id = u.user_id
          WHERE s.sale_id = $1`,
-        [saleId]
+         [saleId]
     );
     const sale = saleResult.rows[0];
 
