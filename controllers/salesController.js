@@ -10,6 +10,7 @@ async function showSalesScreen(req, res) {
             user: req.session.user,
             cart: req.session.cart,
             searchResults: [],
+            query: '',
             error: null
         });
     } catch (err) {
@@ -21,12 +22,13 @@ async function showSalesScreen(req, res) {
 // Search for a product
 async function searchProduct(req, res) {
     try {
-        const { query } = req.body;
+        const { query } = req.query;
         const searchResults = await salesModel.searchProducts(query);
         res.render('agent/sales/new', {
             user: req.session.user,
             cart: req.session.cart || [],
             searchResults,
+            query,
             error: null
         });
     } catch (err) {
@@ -55,14 +57,12 @@ async function addToCart(req, res) {
 
         if (existingItem) {
             existingItem.quantity += parseInt(quantity);
-            existingItem.subtotal = existingItem.quantity * existingItem.unit_price;
         } else {
             req.session.cart.push({
                 product_id: product.product_id,
                 product_name: product.product_name,
                 unit_price: product.selling_price,
-                quantity: parseInt(quantity),
-                subtotal: parseInt(quantity) * product.selling_price
+                quantity: parseInt(quantity)
             });
         }
 
@@ -76,9 +76,9 @@ async function addToCart(req, res) {
 // Remove item from cart
 async function removeFromCart(req, res) {
     try {
-        const { product_id } = req.body;
+        const { productId } = req.params;
         req.session.cart = (req.session.cart || []).filter(
-            item => item.product_id != product_id
+            item => item.product_id != productId
         );
         res.redirect('/agent/sales/new');
     } catch (err) {
@@ -91,7 +91,7 @@ async function removeFromCart(req, res) {
 async function showCheckout(req, res) {
     try {
         const cart = req.session.cart || [];
-        const total = cart.reduce((sum, item) => sum + Number(item.subtotal), 0);
+        const total = cart.reduce((sum, item) => sum + (Number(item.unit_price) * Number(item.quantity)), 0);
         res.render('agent/sales/checkout', {
             user: req.session.user,
             cart,
@@ -114,7 +114,7 @@ async function completeSale(req, res) {
             return res.redirect('/agent/sales/new');
         }
 
-        const total = cart.reduce((sum, item) => sum + Number(item.subtotal), 0);
+        const total = cart.reduce((sum, item) => sum + (Number(item.unit_price) * Number(item.quantity)), 0);
 
         if (parseFloat(amount_paid) < total) {
             return res.render('agent/sales/checkout', {

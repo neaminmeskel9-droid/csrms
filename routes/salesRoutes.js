@@ -3,25 +3,12 @@ const router = express.Router();
 const salesController = require('../controllers/salesController');
 const { isSalesAgent } = require('../middleware/authMiddleware');
 
-// Show sales page
-router.get('/new', isSalesAgent, salesController.showSalesScreen);
-
-// Search product
-router.post('/search', isSalesAgent, salesController.searchProduct);
-
-// Add to cart
-router.post('/add-to-cart', isSalesAgent, salesController.addToCart);
-
-// Remove from cart
-router.post('/remove-from-cart', isSalesAgent, salesController.removeFromCart);
-
-// Checkout
-router.get('/checkout', isSalesAgent, salesController.showCheckout);
-
-// Complete sale
-router.post('/complete', isSalesAgent, salesController.completeSale);
-
-// Receipt
-router.get('/receipt/:saleId', isSalesAgent, salesController.showReceipt);
+router.get('/agent/sales/new', isSalesAgent, salesController.showSalesScreen);
+router.get('/agent/sales/search', isSalesAgent, salesController.searchProduct);
+router.post('/agent/sales/add', isSalesAgent, salesController.addToCart);
+router.post('/agent/sales/remove/:productId', isSalesAgent, salesController.removeFromCart);
+router.get('/agent/sales/checkout', isSalesAgent, salesController.showCheckout);
+router.post('/agent/sales/complete', isSalesAgent, salesController.completeSale);
+router.get('/agent/sales/receipt/:saleId', isSalesAgent, salesController.showReceipt);
 
 module.exports = router;
