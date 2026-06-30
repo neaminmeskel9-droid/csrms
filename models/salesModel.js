@@ -49,11 +49,14 @@ async function createSale(salesAgentId, cartItems, totalAmount, amountPaid) {
                 throw new Error(`Insufficient stock for product ID ${item.product_id}`);
             }
 
-            // Insert sale item
+            // Calculate item subtotal explicitly
+            const itemSubtotal = Number(item.unit_price) * Number(item.quantity);
+
+            // FIXED: Included the subtotal column to match your sale_items schema requirement
             await client.query(
-                `INSERT INTO sale_items (sale_id, product_id, quantity, unit_price)
-                 VALUES ($1, $2, $3, $4)`,
-                [sale.sale_id, item.product_id, item.quantity, item.unit_price]
+                `INSERT INTO sale_items (sale_id, product_id, quantity, unit_price, subtotal)
+                 VALUES ($1, $2, $3, $4, $5)`,
+                [sale.sale_id, item.product_id, item.quantity, item.unit_price, itemSubtotal]
             );
 
             // Reduce stock
@@ -83,7 +86,6 @@ async function createSale(salesAgentId, cartItems, totalAmount, amountPaid) {
 
 // Get full sale details for receipt
 async function getSaleReceipt(saleId) {
-    // Changed JOIN to LEFT JOIN to dynamically handle any user account safely
     const saleResult = await pool.query(
         `SELECT s.*, u.username as agent_name
          FROM sales s
