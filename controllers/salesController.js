@@ -6,7 +6,7 @@ async function showSalesScreen(req, res) {
         if (!req.session.cart) {
             req.session.cart = [];
         }
-        res.render('agent/sales/new', {
+        res.render('agent/sales/sales', {
             user: req.session.user,
             cart: req.session.cart,
             searchResults: [],
