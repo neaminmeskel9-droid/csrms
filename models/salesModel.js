@@ -67,10 +67,10 @@ async function createSale(salesAgentId, cartItems, totalAmount, amountPaid) {
             );
 
             // Log inventory change - Uses your database 'changed_by' column configuration
+            // Log inventory change - Uses your database 'changed_by' column configuration
             await client.query(
-                // Replace the old query with this one:
                 `INSERT INTO inventory_log (product_id, change_type, quantity_change, reason, notes, changed_by) 
-                 VALUES ($1, 'sale', $2, 'Sold to customer', 'Sold to customer', $3)`
+                 VALUES ($1, 'sale', $2, 'Sold to customer', 'Sold to customer', $3)`, // <-- Added the missing comma right here!
                 [item.product_id, -item.quantity, salesAgentId]
             );
         }
