@@ -146,11 +146,13 @@ async function showReceipt(req, res) {
     try {
         const { saleId } = req.params;
         const receipt = await salesModel.getSaleReceipt(saleId);
-        //  CORRECT
-        res.render('agent/sales/receipt', { sale: sale }); {
-            user: req.session.user,
-            receipt
-        };
+
+        // FIX: This maps your 'receipt' variable to 'sale' so EJS can read it!
+        res.render('agent/sales/receipt', { 
+            user: req.session.user, 
+            sale: receipt 
+        });
+
     } catch (err) {
         console.error('showReceipt error:', err);
         res.send('Error loading receipt: ' + err.message);
