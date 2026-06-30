@@ -150,7 +150,7 @@ async function showReceipt(req, res) {
         res.render('agent/sales/receipt', { sale: sale }); {
             user: req.session.user,
             receipt
-        });
+        };
     } catch (err) {
         console.error('showReceipt error:', err);
         res.send('Error loading receipt: ' + err.message);
