@@ -40,7 +40,7 @@ app.use('/', categoryRoutes);
 app.use('/', productRoutes);
 app.use('/', procurementRoutes);
 app.use('/', inventoryRoutes);
-app.use('/agent/sales', salesRoutes);
+app.use('/', salesRoutes);
 app.use('/', cashierRoutes);
 app.use('/', reportRoutes);   
 
